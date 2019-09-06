@@ -25,15 +25,19 @@ end
 
 class FirstMiddleware < Middleware::Base
   def call(env)
-    puts 'First middleware call'
-    app.call(env)
+    puts 'First middleware: before call'
+    status, headers, body = app.call(env)
+    puts 'First middleware: after call'
+    [status, headers, body << "First middleware body\n"]
   end
 end
 
 class SecondMiddleware < Middleware::Base
   def call(env)
-    puts 'Second middleware call'
-    app.call(env)
+    puts 'Second middleware: before call'
+    status, headers, body = app.call(env)
+    puts 'Second middleware: after call'
+    [status, headers, body << "Second middleware body\n"]
   end
 end
 
