@@ -9,22 +9,34 @@ class HelloWorld
   end
 end
 
-class SimpleMiddleware
-  attr_reader :app
-  
-  def initialize(app)
-    @app = app
-  end
+module Middleware
+  class Base
+    attr_reader :app
 
-  def call(env)
-    before = Time.now.to_i
-    status, headers, body = app.call(env)
-    after = Time.now.to_i
-    message = "Request took about #{after - before} second(s)"
-    [status, headers, body << message]
+    def initialize(app)
+      @app = app
+    end
+
+    def call(_env)
+      raise NotImplementedError
+    end
   end
 end
 
+class FirstMiddleware < Middleware::Base
+  def call(env)
+    puts 'First middleware call'
+    app.call(env)
+  end
+end
 
-use SimpleMiddleware
+class SecondMiddleware < Middleware::Base
+  def call(env)
+    puts 'Second middleware call'
+    app.call(env)
+  end
+end
+
+use FirstMiddleware
+use SecondMiddleware
 run HelloWorld.new
