@@ -25,4 +25,6 @@ class SimpleMiddleware
   end
 end
 
-Rack::Handler::Thin.run SimpleMiddleware.new(HelloWorld.new)
+
+use SimpleMiddleware
+run HelloWorld.new
