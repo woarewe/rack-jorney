@@ -9,4 +9,20 @@ class HelloWorld
   end
 end
 
-Rack::Handler::WEBrick.run HelloWorld.new
+class SimpleMiddleware
+  attr_reader :app
+  
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    before = Time.now.to_i
+    status, headers, body = app.call(env)
+    after = Time.now.to_i
+    message = "Request took about #{after - before} second(s)"
+    [status, headers, body << message]
+  end
+end
+
+Rack::Handler::Thin.run SimpleMiddleware.new(HelloWorld.new)
